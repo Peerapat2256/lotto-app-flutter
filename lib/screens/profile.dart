@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadUserInfo();
   }
 
-  /// โหลดข้อมูลจาก SecureStorage
   void _loadUserInfo() async {
     final username = await storage.read(key: "username");
     final email = await storage.read(key: "email");
@@ -38,7 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  /// บันทึกข้อมูลลง SecureStorage
   void _saveUserInfo() async {
     await storage.write(key: "username", value: _nameController.text);
     await storage.write(key: "email", value: _emailController.text);
@@ -46,7 +43,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("บันทึกข้อมูลสำเร็จ")),
+      SnackBar(
+        content: Text("บันทึกข้อมูลสำเร็จ", style: GoogleFonts.notoSansThai()),
+        backgroundColor: const Color(0xFF00E676),
+      ),
     );
   }
 
@@ -61,118 +61,189 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 12, 111, 187),
+        backgroundColor: const Color(0xFF1E293B),
+        elevation: 0,
         title: Text(
-          'โปรไฟล์',
+          'โปรไฟล์ของฉัน',
           style: GoogleFonts.notoSansThai(
             color: Colors.white,
-            fontWeight: FontWeight.w500,
-            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
-        color: Colors.white,
         width: double.infinity,
         height: double.infinity,
-        padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // รูปโปรไฟล์วงกลม
-              GestureDetector(
-                onTap: () {},
+              const SizedBox(height: 24),
+              // Profile circular avatar
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFFFB300), width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFFB300).withOpacity(0.15),
+                      blurRadius: 15,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
                 child: const CircleAvatar(
-                  radius: 60,
+                  radius: 54,
                   backgroundImage: NetworkImage(
                     "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto,t_profile_small/v1/attachments/profile/photo/b91c25cc1491be439d52cd5bb915ad42-1753531201742/f0dd0529-b943-48d9-a82c-19d6ccf248f9.jpg",
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
 
-              // ชื่อ
-              TextFormField(
-                controller: _nameController,
-                style: GoogleFonts.poppins(),
-                decoration: InputDecoration(
-                  labelText: "Name",
-                  labelStyle: GoogleFonts.poppins(),
-                  border: const UnderlineInputBorder(),
+              // Inputs panel container
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E293B),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white.withOpacity(0.05)),
                 ),
-              ),
-              const SizedBox(height: 16),
+                child: Column(
+                  children: [
+                    _buildTextField(
+                      controller: _nameController,
+                      label: "ชื่อผู้ใช้ (Name)",
+                      icon: Icons.person_outline_rounded,
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      controller: _emailController,
+                      label: "อีเมล (Email)",
+                      icon: Icons.email_outlined,
+                    ),
+                    const SizedBox(height: 20),
+                    // Birthday DatePicker field
+                    InkWell(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: const ColorScheme.dark(
+                                  primary: Color(0xFFFFB300),
+                                  onPrimary: Colors.black,
+                                  surface: Color(0xFF1E293B),
+                                  onSurface: Colors.white,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _dobController.text =
+                                "${picked.day}/${picked.month}/${picked.year}";
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: IgnorePointer(
+                        child: _buildTextField(
+                          controller: _dobController,
+                          label: "วันเดือนปีเกิด",
+                          icon: Icons.calendar_month_outlined,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
 
-              // อีเมล
-              TextFormField(
-                controller: _emailController,
-                style: GoogleFonts.poppins(),
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  labelStyle: GoogleFonts.poppins(),
-                  border: const UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // วันเดือนปีเกิด (ใช้ DatePicker)
-              TextFormField(
-                controller: _dobController,
-                readOnly: true,
-                style: GoogleFonts.poppins(),
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _dobController.text =
-                          "${picked.day}/${picked.month}/${picked.year}";
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  labelText: "วันเดือนปีเกิด",
-                  labelStyle: GoogleFonts.notoSansThai(),
-                  border: const UnderlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 30),
-
-              // ปุ่มบันทึก
-              ElevatedButton(
-                onPressed: _saveUserInfo,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 12, 111, 187),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  "บันทึก",
-                  style: GoogleFonts.notoSansThai(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                    // Save changes button
+                    Container(
+                      width: double.infinity,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFFFB300),
+                            Color(0xFFFF8F00),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF8F00).withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _saveUserInfo,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text(
+                          "บันทึกข้อมูล",
+                          style: GoogleFonts.notoSansThai(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      style: GoogleFonts.poppins(fontSize: 15, color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.notoSansThai(fontSize: 13, color: Colors.blueGrey.shade400),
+        prefixIcon: Icon(icon, color: Colors.blueGrey.shade500),
+        filled: true,
+        fillColor: const Color(0xFF0F172A),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0xFFFFB300), width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }

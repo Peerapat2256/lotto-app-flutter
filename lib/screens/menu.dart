@@ -8,81 +8,146 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 12, 111, 187),
+        backgroundColor: const Color(0xFF1E293B),
+        elevation: 0,
         title: Text(
-          'เมนู',
-          style: GoogleFonts.poppins(
-            color: Colors.white,        // สีตัวอักษร
-            fontWeight: FontWeight.bold, // ตัวหนา
-            fontSize: 22,                // ขนาดตัวอักษร
+          'เมนูทั้งหมด',
+          style: GoogleFonts.notoSansThai(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.white),
+            icon: const Icon(Icons.close_rounded, color: Colors.white),
             onPressed: () {
-              Navigator.pop(context); // ✅ กลับไปหน้า home.dart
+              Navigator.pop(context);
             },
           ),
+          const SizedBox(width: 8),
         ],
-        automaticallyImplyLeading: false, // ปิดปุ่ม back อัตโนมัติ
-
+        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1,
-          children: [
-            _menuButton(Icons.shopping_bag, "ซื้อลอตโต้", () {
-              print("กด ซื้อลอตโต้");
-            }),
-            _menuButton(Icons.confirmation_number, "ลอตโต้ของฉัน", () {
-              print("กด ลอตโต้ของฉัน");
-            }),
-            _menuButton(Icons.account_balance_wallet, "ยอดเงิน", () {
-              print("กด ยอดเงิน");
-            }),
-            _menuButton(Icons.description, "ตรวจรางวัล", () {
-              print("กด ตรวจรางวัล");
-            }),
-            _menuButton(Icons.logout, "ออกจากระบบ", () {
-              LogoutController().logout(context);
-            }),
-          ],
-        ),
-      ),
-      backgroundColor: Colors.white,
-    );
-  }
-
-  static Widget _menuButton(IconData icon, String title, VoidCallback onTap) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.grey[700]),
             const SizedBox(height: 10),
-            Text(
-              title,
-              style: GoogleFonts.poppins(   
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+            _buildMenuItem(
+              icon: Icons.shopping_bag_rounded,
+              title: "ซื้อลอตโต้",
+              subtitle: "เลือกซื้อลอตเตอรี่เลขเด็ดสะสมดวง",
+              color: const Color(0xFFFFB300),
+              onTap: () => Navigator.pop(context),
+            ),
+            const SizedBox(height: 16),
+            _buildMenuItem(
+              icon: Icons.confirmation_number_rounded,
+              title: "ลอตโต้ของฉัน",
+              subtitle: "ดูประวัติรายการลอตเตอรี่ที่ซื้อไว้",
+              color: const Color(0xFF3F51B5),
+              onTap: () => Navigator.pop(context),
+            ),
+            const SizedBox(height: 16),
+            _buildMenuItem(
+              icon: Icons.account_balance_wallet_rounded,
+              title: "กระเป๋าเงินและโปรไฟล์",
+              subtitle: "ดูยอดเงินและเติมเงินเข้าระบบ",
+              color: const Color(0xFF4CAF50),
+              onTap: () => Navigator.pop(context),
+            ),
+            const SizedBox(height: 16),
+            _buildMenuItem(
+              icon: Icons.search_rounded,
+              title: "ตรวจรางวัล",
+              subtitle: "ตรวจสอบหมายเลขถูกรางวัลลอตเตอรี่",
+              color: const Color(0xFF00B0FF),
+              onTap: () => Navigator.pop(context),
+            ),
+            const SizedBox(height: 40),
+            
+            // Logout
+            InkWell(
+              onTap: () {
+                LogoutController().logout(context);
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.red.withOpacity(0.2)),
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.logout_rounded, color: Colors.redAccent),
+                      const SizedBox(width: 12),
+                      Text(
+                        "ออกจากระบบบัญชี",
+                        style: GoogleFonts.notoSansThai(
+                          color: Colors.redAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: color, size: 28),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.notoSansThai(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: GoogleFonts.notoSansThai(
+            color: Colors.blueGrey.shade400,
+            fontSize: 13,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+        onTap: onTap,
       ),
     );
   }

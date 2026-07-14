@@ -20,11 +20,11 @@ class HomePage extends StatefulWidget {
 }
 
 List<Map<String, dynamic>> navItems = [
-  {"icon": Icons.home, "label": "หน้าแรก"},
-  {"icon": Icons.shopping_bag, "label": "ซื้อลอตโต้"},
-  {"icon": Icons.shopping_cart, "label": "ตะกร้า"},
-  {"icon": Icons.search, "label": "ตรวจรางวัล"},
-  {"icon": Icons.person, "label": "คุณ"},
+  {"icon": Icons.home_rounded, "label": "หน้าแรก"},
+  {"icon": Icons.shopping_bag_rounded, "label": "ซื้อลอตโต้"},
+  {"icon": Icons.shopping_cart_rounded, "label": "ตะกร้า"},
+  {"icon": Icons.search_rounded, "label": "ตรวจรางวัล"},
+  {"icon": Icons.person_rounded, "label": "คุณ"},
 ];
 
 class _HomePageState extends State<HomePage> {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   String _formatCurrency(String amount) {
     try {
       final number = double.parse(amount);
-      final formatter = NumberFormat("#,##0", "th_TH"); 
+      final formatter = NumberFormat("#,##0.00", "th_TH"); 
       return formatter.format(number);
     } catch (e) {
       return amount;
@@ -96,45 +96,54 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0F172A), // Slate 900
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF1E293B), // Slate 800
         elevation: 0,
         automaticallyImplyLeading: false,
-        titleSpacing: 0,
         title: Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 8.0),
           child: Row(
             children: [
-              SizedBox(
-                width: 65,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(
-                      "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto,t_profile_small/v1/attachments/profile/photo/b91c25cc1491be439d52cd5bb915ad42-1753531201742/f0dd0529-b943-48d9-a82c-19d6ccf248f9.jpg",
-                    ),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFFFB300), width: 1.5),
+                ),
+                child: const CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                    "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto,t_profile_small/v1/attachments/profile/photo/b91c25cc1491be439d52cd5bb915ad42-1753531201742/f0dd0529-b943-48d9-a82c-19d6ccf248f9.jpg",
                   ),
                 ),
               ),
               const SizedBox(width: 12),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  _username,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "ยินดีต้อนรับ,",
+                    style: GoogleFonts.notoSansThai(
+                      color: Colors.blueGrey.shade400,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
+                  Text(
+                    _username,
+                    style: GoogleFonts.notoSansThai(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black),
+            icon: const Icon(Icons.notes_rounded, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
@@ -142,206 +151,313 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
-
       body: Container(
-        padding: const EdgeInsets.only(left: 10, right: 10),
         width: double.infinity,
         height: double.infinity,
-        color: const Color.fromARGB(255, 255, 255, 255),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1E293B), // Slate 800
+              Color(0xFF0F172A), // Slate 900
+            ],
+          ),
+        ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 การ์ดยอดเงินคงเหลือ
+              // 🔹 Premium Gold Wallet Card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0C6FBB),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF2E3A59),
+                      Color(0xFF151B26),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: const Color(0xFFFFB300).withOpacity(0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: Offset(0, 15),
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
-                child: Container(
-                  height: 130,
-                  padding: const EdgeInsets.only(top: 25, left: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "ยอดเงินคงเหลือ",
-                        style: GoogleFonts.notoSansThai(
-                          color: Colors.white70,
-                          fontSize: 17,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "บัตรเครดิต Drawly Wallet",
+                          style: GoogleFonts.notoSansThai(
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "${_formatCurrency(_wallet)} บาท",
-                        style: GoogleFonts.notoSansThai(
-                          color: Colors.white,
-                          fontSize: 29,
-                          fontWeight: FontWeight.bold,
+                        const Icon(
+                          Icons.nfc_rounded,
+                          color: Color(0xFFFFB300),
+                          size: 24,
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      "ยอดเงินคงเหลือ",
+                      style: GoogleFonts.notoSansThai(
+                        color: Colors.white70,
+                        fontSize: 15,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "${_formatCurrency(_wallet)} ฿",
+                          style: GoogleFonts.poppins(
+                            color: const Color(0xFFFFB300),
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFB300).withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "เงินจริง",
+                            style: GoogleFonts.notoSansThai(
+                              color: const Color(0xFFFFB300),
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
 
+              Text(
+                "เมนูจัดการลอตเตอรี่",
+                style: GoogleFonts.notoSansThai(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 🔹 Dynamic Grid Menu Buttons
               GridView.count(
                 shrinkWrap: true,
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
+                childAspectRatio: 1.3,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _menuButton(Icons.shopping_bag, "ซื้อลอตโต้", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LottoPage(currentIndex: 1),
-                      ),
-                    );
-                  }),
-                  _menuButton(Icons.confirmation_number, "ลอตโต้ของฉัน", () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LottoMePage(),
-                      ),
-                    );
-                  }),
-                  _menuButton(Icons.search, "ตรวจรางวัล", () {
-                    _onTabTapped(3);
-                  }),
-                  _menuButton(Icons.account_balance_wallet, "ยอดเงิน", () {}),
-                  _menuButton(Icons.logout, "ออกจากระบบ", () {
-                    LogoutController().logout(context);
-                  }),
+                  _menuButton(
+                    Icons.shopping_bag_rounded,
+                    "ซื้อลอตโต้",
+                    const Color(0xFFFFB300),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LottoPage(currentIndex: 1),
+                        ),
+                      );
+                    },
+                  ),
+                  _menuButton(
+                    Icons.confirmation_number_rounded,
+                    "ลอตโต้ของฉัน",
+                    const Color(0xFF3F51B5),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LottoMePage(),
+                        ),
+                      );
+                    },
+                  ),
+                  _menuButton(
+                    Icons.search_rounded,
+                    "ตรวจรางวัล",
+                    const Color(0xFF00B0FF),
+                    () {
+                      _onTabTapped(3);
+                    },
+                  ),
+                  _menuButton(
+                    Icons.account_balance_wallet_rounded,
+                    "กระเป๋าเงิน",
+                    const Color(0xFF4CAF50),
+                    () {
+                      _onTabTapped(4);
+                    },
+                  ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              
+              // 🔹 Logout section bar
+              InkWell(
+                onTap: () {
+                  LogoutController().logout(context);
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.red.withOpacity(0.15)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.logout_rounded, color: Colors.redAccent),
+                      const SizedBox(width: 16),
+                      Text(
+                        "ออกจากระบบ",
+                        style: GoogleFonts.notoSansThai(
+                          color: Colors.redAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.chevron_right_rounded, color: Colors.redAccent),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
-
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-             height: MediaQuery.of(context).size.height * 0.11, // 15% ของหน้าจอ
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(height: 0.5, color: const Color(0xFFE6E6E6)),
-                Container(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: navItems.asMap().entries.map((entry) {
-                      int idx = entry.key;
-                      return Container(
-                        height: 5,
-                        width: 55,
-                        decoration: BoxDecoration(
-                          color: _currentIndex == idx
-                              ? const Color(0xFF0C6FBB)
-                              : Colors.transparent,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(3),
-                            bottomRight: Radius.circular(3),
-                          ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E293B),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: navItems.asMap().entries.map((entry) {
+                int idx = entry.key;
+                bool isSelected = _currentIndex == idx;
+                return InkWell(
+                  onTap: () => _onTabTapped(idx),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        entry.value["icon"],
+                        color: isSelected ? const Color(0xFFFFB300) : Colors.blueGrey.shade400,
+                        size: 28,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        entry.value["label"],
+                        style: GoogleFonts.notoSansThai(
+                          color: isSelected ? const Color(0xFFFFB300) : Colors.blueGrey.shade400,
+                          fontSize: 11,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _menuButton(IconData icon, String title, Color color, VoidCallback onTap) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, size: 28, color: color),
                 ),
-                Expanded(
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      splashColor: const Color.fromARGB(
-                        255,
-                        241,
-                        241,
-                        241,
-                      ).withOpacity(0.3),
-                      highlightColor: const Color.fromARGB(
-                        255,
-                        242,
-                        242,
-                        242,
-                      ).withOpacity(0.1),
-                    ),
-                    child: BottomNavigationBar(
-                      type: BottomNavigationBarType.fixed,
-                      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                      selectedItemColor: const Color(0xFF0C6FBB),
-                      unselectedItemColor: const Color.fromARGB(
-                        255,
-                        82,
-                        82,
-                        82,
-                      ),
-                      currentIndex: _currentIndex,
-                      onTap: _onTabTapped,
-                      iconSize: 35,
-                      selectedLabelStyle: GoogleFonts.notoSansThai(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                      unselectedLabelStyle: GoogleFonts.notoSansThai(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 13,
-                      ),
-                      items: navItems.map((item) {
-                        return BottomNavigationBarItem(
-                          icon: Icon(item["icon"]),
-                          label: item["label"],
-                        );
-                      }).toList(),
-                    ),
+                const Spacer(),
+                Text(
+                  title,
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 15,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _menuButton(IconData icon, String title, VoidCallback onTap) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.grey[500]),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: GoogleFonts.notoSansThai(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
         ),
       ),
     );
