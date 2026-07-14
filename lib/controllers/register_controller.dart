@@ -24,7 +24,7 @@ class RegisterController extends ChangeNotifier {
     _context = inContext;
   }
 
-  Future<void> register() async {
+  Future<void> register({String role = "user"}) async {
     print("register");
     try {
       double wallet = 0.0;
@@ -36,6 +36,7 @@ class RegisterController extends ChangeNotifier {
         "email": emailController.text,
         "password": passwordController.text,
         "wallet": wallet,
+        "role": role,
       };
 
       final response = await apiService.postRequest("/user/register", data, token: '');

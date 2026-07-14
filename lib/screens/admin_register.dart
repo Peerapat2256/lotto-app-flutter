@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_backend/controllers/register_controller.dart';
 import 'package:flutter_backend/screens/login.dart';
-import 'package:flutter_backend/screens/admin_register.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class AdminRegisterPage extends StatefulWidget {
+  const AdminRegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<AdminRegisterPage> createState() => _AdminRegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _AdminRegisterPageState extends State<AdminRegisterPage> {
   @override
   Widget build(BuildContext context) {
     final myController = Provider.of<RegisterController>(context);
@@ -39,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 20),
 
                 Text(
-                  'Drawly',
+                  'Drawly (Admin)',
                   style: GoogleFonts.poppins(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -52,13 +51,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
                   child: Column(
                     children: [
-                      _buildTextField(myController.nameContrller, "ชื่อผู้ใช้"),
+                      _buildTextField(myController.nameContrller, "ชื่อผู้ใช้ (Admin)"),
                       const SizedBox(height: 16),
-                      _buildTextField(myController.emailController, "อีเมล"),
+                      _buildTextField(myController.emailController, "อีเมล Admin"),
                       const SizedBox(height: 16),
                       _buildTextField(
                         myController.passwordController,
-                        "รหัสผ่าน",
+                        "รหัสผ่าน Admin",
                         obscureText: true,
                       ),
 
@@ -78,16 +77,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0C6FBB),
+                            backgroundColor: const Color(0xFFD32F2F), // ใช้อีกสีให้รู้ว่าเป็น Admin (แดงเข้ม)
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
                           onPressed: () {
-                            myController.register();
+                            myController.register(role: 'admin');
                           },
                           child: Text(
-                            "สมัครบัญชี",
+                            "สมัครบัญชี Admin",
                             style: GoogleFonts.notoSansThai(
                               fontSize: 20,
                               color: Colors.white,
@@ -116,19 +115,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () => _showAdminPasscodeDialog(context),
-                        child: Text(
-                          "สมัครสมาชิกสำหรับ Admin",
-                          style: GoogleFonts.notoSansThai(
-                            fontSize: 14,
-                            color: Colors.red.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -137,79 +123,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showAdminPasscodeDialog(BuildContext context) {
-    final passcodeController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(
-            "ยืนยันสิทธิ์ Admin",
-            style: GoogleFonts.notoSansThai(fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "กรุณากรอกรหัสผ่าน Admin เพื่อดำเนินการสมัครสมาชิก",
-                style: GoogleFonts.notoSansThai(fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: passcodeController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "รหัสผ่าน Admin",
-                  hintStyle: GoogleFonts.notoSansThai(fontSize: 14),
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(
-                "ยกเลิก",
-                style: GoogleFonts.notoSansThai(color: Colors.grey),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (passcodeController.text == "admin088") {
-                  Navigator.pop(dialogContext); // close dialog
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (_) => RegisterController(),
-                        child: const AdminRegisterPage(),
-                      ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "รหัสผ่านไม่ถูกต้อง",
-                        style: GoogleFonts.notoSansThai(),
-                      ),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              child: Text(
-                "ยืนยัน",
-                style: GoogleFonts.notoSansThai(),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -234,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
             72,
             72,
             72,
-          ), // ฟอนต์ hint ก็ใช้ notoSansThai
+          ),
         ),
         suffixText: suffixText,
         suffixStyle: GoogleFonts.notoSansThai(

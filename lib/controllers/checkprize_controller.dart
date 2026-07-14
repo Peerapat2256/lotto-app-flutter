@@ -1,11 +1,5 @@
 import 'dart:developer';
-import 'dart:ffi';
-import 'package:flutter/material.dart';
-import 'package:flutter_backend/screens/admin.dart';
-import 'package:flutter_backend/screens/home.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_backend/service/api_service.dart';
-import 'package:flutter_backend/models/md_respone.dart';
 
 /// Model สำหรับผลรางวัล
 class CheckprizePageControllerModel {
@@ -27,10 +21,10 @@ class CheckprizePageControllerModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-        "message": message,
-        "data": List<dynamic>.from(data.map((x) => x.toJson())),
-      };
+    "status": status,
+    "message": message,
+    "data": List<dynamic>.from(data.map((x) => x.toJson())),
+  };
 }
 
 /// Model ของแต่ละรางวัล
@@ -48,21 +42,19 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        number: json["number"],
-        prizeAmount: json["prize_amount"],
-        prizeRank: json["prize_rank"],
-        lotto_id: json["lotto_id"],
-      );
+    number: json["number"],
+    prizeAmount: json["prize_amount"],
+    prizeRank: json["prize_rank"],
+    lotto_id: json["lotto_id"],
+  );
 
-  
   Map<String, dynamic> toJson() => {
-        "number": number,
-        "prize_amount": prizeAmount,
-        "prize_rank": prizeRank,
-        // "lotto_id": lotto_id,
-      };
+    "number": number,
+    "prize_amount": prizeAmount,
+    "prize_rank": prizeRank,
+    // "lotto_id": lotto_id,
+  };
 }
-
 
 class CheckprizePageController {
   ApiService apiService = ApiService();
@@ -72,55 +64,48 @@ class CheckprizePageController {
     try {
       String formattedDate =
           "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-      
-      final response =  await apiService.postRequest("/lotto/prize", {"drawdate": formattedDate}, token: '');
+
+      final response = await apiService.postRequest("/lotto/prize", {
+        "drawdate": formattedDate,
+      }, token: '');
       return CheckprizePageControllerModel.fromJson(response);
     } catch (e) {
       throw Exception("Error fetching prize: $e");
     }
   }
 
-
-
   // ตรวจรางวัลด้วยหมายเลข
   Future<CheckprizePageControllerModel> checkPrizeByNumber(
-      String number, DateTime date,String username) async {
+    String number,
+    DateTime date,
+    String username,
+  ) async {
     try {
       String formattedDate =
           "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-      final response = await apiService.postRequest("/lotto/checkprize",{"number": number, "drawdate": formattedDate, "username": username}, token: '',);
+      final response = await apiService.postRequest("/lotto/checkprize", {
+        "number": number,
+        "drawdate": formattedDate,
+        "username": username,
+      }, token: '');
       // log("username = ${username}number = ${number}drawdate = $formattedDate");
-
 
       log("API Response: $response");
       log("username = $username, number = $number, drawdate = $formattedDate");
       return CheckprizePageControllerModel.fromJson(response);
-
-   
     } catch (e) {
       throw Exception("Error checking prize: $e");
     }
   }
 
+  Future<Map<String, dynamic>> claimPrize(int lottoId) async {
+    log("claimPrize lottoid: $lottoId");
 
-
-
-
-Future<Map<String, dynamic>> claimPrize(int lottoId) async {
-
-      log("claimPrize lottoid: $lottoId");
-
-  try {
-    final response = await apiService.claimPrize(lottoId, withAuth: true);
-    return response;
-  } catch (e) {
-    throw Exception("Error claiming prize: $e");
+    try {
+      final response = await apiService.claimPrize(lottoId, withAuth: true);
+      return response;
+    } catch (e) {
+      throw Exception("Error claiming prize: $e");
+    }
   }
-}
-
-
-
-
-
-  
 }
