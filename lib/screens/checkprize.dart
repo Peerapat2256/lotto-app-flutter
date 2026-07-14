@@ -173,204 +173,177 @@ class _CheckprizePageState extends State<CheckprizePage> {
 
   Widget _buildLosingCard() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.red.withOpacity(0.2)),
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.shade200),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.sentiment_very_dissatisfied_rounded, color: Colors.redAccent, size: 54),
-          const SizedBox(height: 12),
+          Icon(Icons.close, color: Colors.red, size: 50),
+          const SizedBox(height: 10),
           Text(
-            "เสียใจด้วยนะคุณ",
+            "ไม่ถูกรางวัล",
             style: GoogleFonts.notoSansThai(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.redAccent,
+              color: Colors.red,
             ),
           ),
-          const SizedBox(height: 4),
           Text(
-            "ไม่ถูกรางวัล หรือ ไม่พบสลากใบนี้ในระบบ",
+            "หรือไม่พบสลากใบนี้",
             style: GoogleFonts.notoSansThai(
               fontSize: 14,
-              color: Colors.blueGrey.shade400,
+              color: Colors.red.shade700,
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
+  // แก้ไข _buildWinningPrizeCard ให้รับ List<Datum> แทน Datum เดียว
   Widget _buildWinningPrizeCard(List<Datum> prizes) {
+    // เรียงรางวัลตาม rank (รางวัลที่ 1, 2, 3, เลขท้าย 3 ตัว, เลขท้าย 2 ตัว)
     prizes.sort((a, b) => a.prizeRank.compareTo(b.prizeRank));
 
+    // คำนวณเงินรางวัลรวม
     double totalAmount = 0;
     for (var prize in prizes) {
       totalAmount += double.parse(prize.prizeAmount);
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFFFB300).withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Card(
+        color: Colors.white,
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF00E676).withOpacity(0.12),
-                borderRadius: BorderRadius.circular(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // ข้อความ "ยินดีด้วยน้า"
+              Text(
+                "ยินดีด้วยน้า",
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              child: Text(
-                "ยินดีด้วย คุณถูกรางวัล! 🎉",
+              const SizedBox(height: 10),
+
+              // หมายเลขที่ถูกรางวัล
+              Text(
+                prizes.first.number,
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  letterSpacing: 6,
+                ),
+              ),
+              const SizedBox(height: 5),
+
+              // วันที่ออกรางวัล
+              Text(
+                "งวดประจำวันที่ ${selectedDate.day} ${_monthName(selectedDate.month)} ${selectedDate.year + 543}",
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // แสดงรางวัลที่ถูกทั้งหมด
+              ...prizes.map(
+                (prize) => Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0C6FBB),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text(
+                    "ถูกรางวัลที่ ${prize.prizeRank} (${_formatPrizeAmount(prize.prizeAmount)} บาท)",
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ข้อความ "รับรางวัลรวม"
+              Text(
+                "รับรางวัลรวม",
                 style: GoogleFonts.notoSansThai(
                   fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 5),
+
+              // จำนวนเงินรางวัลรวม
+              Text(
+                "${_formatPrizeAmount(totalAmount.toString())} บาท",
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF00E676),
+                  color: const Color(0xFF0C6FBB),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-            // Numbers
-            Text(
-              prizes.first.number,
-              style: GoogleFonts.poppins(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 6,
-              ),
-            ),
-            const SizedBox(height: 6),
-
-            Text(
-              "งวดประจำวันที่ ${selectedDate.day} ${_monthName(selectedDate.month)} ${selectedDate.year + 543}",
-              style: GoogleFonts.notoSansThai(
-                fontSize: 13,
-                color: Colors.blueGrey.shade400,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Prize ranks list
-            ...prizes.map(
-              (prize) => Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0F172A),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "ถูกรางวัลที่ ${prize.prizeRank}",
-                      style: GoogleFonts.notoSansThai(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+              // ปุ่มขึ้นเงินรางวัล
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _claimMultiplePrizes(prizes);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    Text(
-                      "+${_formatPrizeAmount(prize.prizeAmount)} ฿",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFFFB300),
-                      ),
+                    elevation: 3,
+                  ),
+                  child: Text(
+                    "ขึ้นเงินรางวัลทั้งหมด",
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-            Text(
-              "รวมเงินรางวัลทั้งหมด",
-              style: GoogleFonts.notoSansThai(
-                fontSize: 14,
-                color: Colors.blueGrey.shade400,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "${_formatPrizeAmount(totalAmount.toString())} บาท",
-              style: GoogleFonts.notoSansThai(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF00E676),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Claim button
-            Container(
-              width: double.infinity,
-              height: 48,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFB300),
-                    Color(0xFFFF8F00),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFF8F00).withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  _claimMultiplePrizes(prizes);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-                child: Text(
-                  "ขึ้นเงินรางวัลทั้งหมด",
-                  style: GoogleFonts.notoSansThai(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // Helper function สำหรับจัดรูปแบบตัวเลขเงินรางวัล
   String _formatPrizeAmount(String amount) {
     try {
       final number = double.parse(amount);
@@ -388,64 +361,93 @@ class _CheckprizePageState extends State<CheckprizePage> {
   // Function สำหรับขึ้นเงินรางวัล
 
   void _claimPrize(Datum prize) async {
+    // แสดง confirmation dialog ก่อน
     bool? confirm = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
+      barrierColor: const Color.fromARGB(
+        133,
+        232,
+        232,
+        232,
+      ).withOpacity(0.6), // พื้นหลังหมอกขาว/เทา
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF1E293B),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+            borderRadius: BorderRadius.circular(20),
           ),
           contentPadding: const EdgeInsets.all(24),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // หัวข้อ
               Text(
-                "ยืนยันขึ้นเงินรางวัล",
+                "ขึ้นเงินรางวัล",
                 style: GoogleFonts.notoSansThai(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 16),
+
+              // ข้อความถาม
               Text(
-                "คุณต้องการขึ้นเงินรางวัลจำนวน\n${_formatPrizeAmount(prize.prizeAmount)} บาท ใช่ไหม?",
+                "คุณต้องการขึ้นเงินรางวัล\n${_formatPrizeAmount(prize.prizeAmount)} บาทใช่ไหม?",
                 style: GoogleFonts.notoSansThai(
-                  fontSize: 15,
-                  color: Colors.blueGrey.shade300,
+                  fontSize: 16,
+                  color: Colors.black54,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
+
+              // ปุ่มเลือก
               Row(
                 children: [
+                  // ปุ่มยกเลิก
                   Expanded(
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                       child: Text(
                         "ไม่ใช่",
-                        style: GoogleFonts.notoSansThai(color: Colors.blueGrey.shade400),
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
+
+                  // ปุ่มยืนยัน
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFB300),
-                        foregroundColor: Colors.black,
+                        backgroundColor: const Color(0xFF0C6FBB),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        elevation: 0,
                       ),
                       child: Text(
                         "ยืนยัน",
-                        style: GoogleFonts.notoSansThai(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -457,13 +459,16 @@ class _CheckprizePageState extends State<CheckprizePage> {
       },
     );
 
+    // ถ้าผู้ใช้ยืนยัน ให้ทำการขึ้นเงินรางวัล
     if (confirm == true) {
       try {
+        // แสดง loading dialog
         showDialog(
           context: context,
           barrierDismissible: false,
+          barrierColor: Colors.black54.withOpacity(0.6), // พื้นหลังหมอกขาว/เทา
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1E293B),
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -472,12 +477,15 @@ class _CheckprizePageState extends State<CheckprizePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB300)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0C6FBB)),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "กำลังดำเนินการ...",
-                  style: GoogleFonts.notoSansThai(color: Colors.white),
+                  "กำลังขึ้นเงินรางวัล...",
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),
@@ -486,29 +494,48 @@ class _CheckprizePageState extends State<CheckprizePage> {
 
         final result = await _controller.claimPrize(prize.lotto_id);
 
+        // อัปเดต wallet ใน storage
         final storage = FlutterSecureStorage();
         await storage.write(
           key: "wallet",
           value: result['data']['wallet_after'].toString(),
         );
 
+        // ปิด loading dialog
         Navigator.of(context).pop();
 
+        // แสดงข้อความสำเร็จ
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               "ขึ้นเงินรางวัลเรียบร้อยแล้ว จำนวน ${_formatPrizeAmount(prize.prizeAmount)} บาท",
               style: GoogleFonts.notoSansThai(),
             ),
-            backgroundColor: const Color(0xFF00E676),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       } catch (e) {
+        // ปิด loading dialog ถ้ามี error
         Navigator.of(context).pop();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("เกิดข้อผิดพลาด: $e", style: GoogleFonts.notoSansThai()),
-            backgroundColor: Colors.redAccent,
+            content: Text(
+              "เกิดข้อผิดพลาดในการขึ้นเงินรางวัล: $e",
+              style: GoogleFonts.notoSansThai(),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
@@ -516,65 +543,101 @@ class _CheckprizePageState extends State<CheckprizePage> {
   }
 
   void _claimMultiplePrizes(List<Datum> prizes) async {
+    // คำนวณเงินรางวัลรวม
     double totalAmount = 0;
     String prizeDetails = "";
 
     for (var prize in prizes) {
       totalAmount += double.parse(prize.prizeAmount);
-      prizeDetails += "รางวัลที่ ${prize.prizeRank} (${_formatPrizeAmount(prize.prizeAmount)} บาท)\n";
+      prizeDetails +=
+          "รางวัลที่ ${prize.prizeRank} (${_formatPrizeAmount(prize.prizeAmount)} บาท)\n";
     }
 
+    // แสดง confirmation dialog
     bool? confirm = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
+      barrierColor: const Color.fromARGB(133, 232, 232, 232).withOpacity(0.6),
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF1E293B),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+            borderRadius: BorderRadius.circular(20),
           ),
           contentPadding: const EdgeInsets.all(24),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "ขึ้นเงินรางวัลทั้งหมด",
+                "ขึ้นเงินรางวัล",
                 style: GoogleFonts.notoSansThai(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 16),
+
+              Text(
+                "รางวัลที่ถูก:",
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+
               Text(
                 prizeDetails.trim(),
                 style: GoogleFonts.notoSansThai(
                   fontSize: 14,
-                  color: Colors.blueGrey.shade300,
+                  color: Colors.black54,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
+
               Text(
                 "รวมเงินรางวัล ${_formatPrizeAmount(totalAmount.toString())} บาท",
                 style: GoogleFonts.notoSansThai(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFFFFB300),
+                  color: const Color(0xFF0C6FBB),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+
+              Text(
+                "คุณต้องการขึ้นเงินรางวัลทั้งหมดใช่ไหม?",
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 16,
+                  color: Colors.black54,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
+
               Row(
                 children: [
                   Expanded(
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                       child: Text(
                         "ไม่ใช่",
-                        style: GoogleFonts.notoSansThai(color: Colors.blueGrey.shade400),
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -583,15 +646,20 @@ class _CheckprizePageState extends State<CheckprizePage> {
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFB300),
-                        foregroundColor: Colors.black,
+                        backgroundColor: const Color(0xFF0C6FBB),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        elevation: 0,
                       ),
                       child: Text(
                         "ยืนยัน",
-                        style: GoogleFonts.notoSansThai(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -605,11 +673,13 @@ class _CheckprizePageState extends State<CheckprizePage> {
 
     if (confirm == true) {
       try {
+        // แสดง loading dialog
         showDialog(
           context: context,
           barrierDismissible: false,
+          barrierColor: Colors.black54.withOpacity(0.6),
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1E293B),
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -618,38 +688,52 @@ class _CheckprizePageState extends State<CheckprizePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB300)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0C6FBB)),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   "กำลังขึ้นเงินรางวัล...",
-                  style: GoogleFonts.notoSansThai(color: Colors.white),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),
           ),
         );
 
+        // ส่ง lotto_id ไปขึ้นรางวัล (ใช้ lotto_id ตัวแรก เนื่องจากเป็นใบเดียวกัน)
         final result = await _controller.claimPrize(prizes.first.lotto_id);
 
+        // อัปเดต wallet ใน storage
         final storage = FlutterSecureStorage();
         await storage.write(
           key: "wallet",
           value: result['data']['wallet_after'].toString(),
         );
 
+        // ปิด loading dialog
         Navigator.of(context).pop();
 
+        // แสดงข้อความสำเร็จ
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               "ขึ้นเงินรางวัลเรียบร้อยแล้ว จำนวน ${_formatPrizeAmount(totalAmount.toString())} บาท",
               style: GoogleFonts.notoSansThai(),
             ),
-            backgroundColor: const Color(0xFF00E676),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
 
+        // รีเฟรชหน้าจอ
         setState(() {
           _hasSearched = false;
           checkPrizeResult = [];
@@ -658,8 +742,16 @@ class _CheckprizePageState extends State<CheckprizePage> {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("เกิดข้อผิดพลาด: $e", style: GoogleFonts.notoSansThai()),
-            backgroundColor: Colors.redAccent,
+            content: Text(
+              "เกิดข้อผิดพลาดในการขึ้นเงินรางวัล: $e",
+              style: GoogleFonts.notoSansThai(),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
@@ -797,217 +889,190 @@ class _CheckprizePageState extends State<CheckprizePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1E293B),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "ตรวจผลรางวัลลอตเตอรี่",
-                    style: GoogleFonts.notoSansThai(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  GestureDetector(
-                    onTap: () => _pickDate(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0F172A),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${selectedDate.day} ${_monthName(selectedDate.month)} ${selectedDate.year + 543}",
-                            style: GoogleFonts.notoSansThai(
-                              fontSize: 15,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Icon(Icons.calendar_today_rounded, color: Color(0xFFFFB300), size: 20),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextField(
-                    controller: _numberController,
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "กรอกหมายเลขสลาก 6 หลัก",
-                      hintStyle: GoogleFonts.notoSansThai(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.3),
-                        letterSpacing: 0,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF0F172A),
-                      counterText: "",
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(color: Color(0xFFFFB300), width: 1.5),
-                      ),
-                      suffixIcon: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFFB300),
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.search_rounded, color: Colors.black, size: 20),
-                          onPressed: () async {
-                            String number = _numberController.text.trim();
-                            if (number.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("กรุณากรอกหมายเลขสลาก", style: GoogleFonts.notoSansThai()),
-                                  backgroundColor: Colors.redAccent,
-                                ),
-                              );
-                              return;
-                            }
-
-                            setState(() {
-                              _loading = true;
-                              _hasSearched = true;
-                              checkPrizeResult = [];
-                            });
-
-                            try {
-                              final model = await _controller.checkPrizeByNumber(
-                                number,
-                                selectedDate,
-                                _nameController.text,
-                              );
-
-                              setState(() {
-                                checkPrizeResult = model.data;
-                              });
-
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(model.message, style: GoogleFonts.notoSansThai()),
-                                    backgroundColor: const Color(0xFF00E676),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("เกิดข้อผิดพลาด: $e", style: GoogleFonts.notoSansThai()),
-                                    backgroundColor: Colors.redAccent,
-                                  ),
-                                );
-                              }
-                            } finally {
-                              setState(() => _loading = false);
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            Expanded(
-              child: _loading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB300)),
-                      ),
-                    )
-                  : _buildPrizeDisplay(),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E293B),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, -3),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Container(
-            height: 72,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: navItems.asMap().entries.map((entry) {
-                int idx = entry.key;
-                bool isSelected = _currentIndex == idx;
-                return InkWell(
-                  onTap: () => _onTabTapped(idx),
-                  borderRadius: BorderRadius.circular(16),
+      body: Stack(
+        children: [
+          Container(
+            height: 250,
+            color: const Color.fromARGB(255, 45, 187, 236),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+                GestureDetector(
+                  onTap: () => _pickDate(context),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          entry.value["icon"],
-                          color: isSelected ? const Color(0xFFFFB300) : Colors.blueGrey.shade400,
-                          size: 26,
-                        ),
-                        const SizedBox(height: 4),
                         Text(
-                          entry.value["label"],
-                          style: GoogleFonts.notoSansThai(
-                            color: isSelected ? const Color(0xFFFFB300) : Colors.blueGrey.shade400,
-                            fontSize: 11,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
+                          "${selectedDate.day} ${_monthName(selectedDate.month)} ${selectedDate.year + 543}",
+                          style: GoogleFonts.notoSansThai(fontSize: 16),
                         ),
+                        const Icon(Icons.calendar_today),
                       ],
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _numberController,
+                  decoration: InputDecoration(
+                    labelText: "กรอกหมายเลขสลาก",
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () async {
+                        String number = _numberController.text.trim();
+                        if (number.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("กรุณากรอกหมายเลขสลาก"),
+                            ),
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          _loading = true;
+                          _hasSearched = true;
+                          checkPrizeResult = [];
+                        });
+
+                        try {
+                          final model = await _controller.checkPrizeByNumber(
+                            number,
+                            selectedDate,
+                            _nameController.text,
+                          );
+
+                          setState(() {
+                            checkPrizeResult = model.data;
+                          });
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(model.message)),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("เกิดข้อผิดพลาด: $e")),
+                            );
+                          }
+                        } finally {
+                          setState(() => _loading = false);
+                        }
+                      },
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _buildPrizeDisplay(),
+                ),
+              ],
             ),
           ),
-        ),
+        ],
+      ),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.11, // 15% ของหน้าจอ
+
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(height: 0.5, color: const Color(0xFFE6E6E6)),
+                Container(
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: navItems.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      return Container(
+                        height: 5,
+                        width: 55,
+                        decoration: BoxDecoration(
+                          color: _currentIndex == idx
+                              ? const Color(0xFF0C6FBB)
+                              : Colors.transparent,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(3),
+                            bottomRight: Radius.circular(3),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Expanded(
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      splashColor: const Color.fromARGB(
+                        255,
+                        241,
+                        241,
+                        241,
+                      ).withOpacity(0.3),
+                      highlightColor: const Color.fromARGB(
+                        255,
+                        242,
+                        242,
+                        242,
+                      ).withOpacity(0.1),
+                    ),
+                    child: BottomNavigationBar(
+                      type: BottomNavigationBarType.fixed,
+                      backgroundColor: Colors.white,
+                      selectedItemColor: const Color(0xFF0C6FBB),
+                      unselectedItemColor: const Color.fromARGB(
+                        255,
+                        82,
+                        82,
+                        82,
+                      ),
+                      currentIndex: _currentIndex,
+                      onTap: _onTabTapped,
+                      iconSize: 35,
+                      selectedLabelStyle: GoogleFonts.notoSansThai(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      unselectedLabelStyle: GoogleFonts.notoSansThai(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                      items: navItems.map((item) {
+                        return BottomNavigationBarItem(
+                          icon: Icon(item["icon"]),
+                          label: item["label"],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_backend/controllers/sold_lotto_admin_controllor.dart';
 
 class LotterySoldPage extends StatefulWidget {
@@ -27,48 +26,41 @@ class _LotterySoldPageState extends State<LotterySoldPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: const Color(0xFF0F172A),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF1E293B),
-          elevation: 0,
+          backgroundColor: const Color(0xFF0C6FBB),
           toolbarHeight: 80,
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+            icon: const Icon(Icons.chevron_left, color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          title: Text(
-            "จัดการรายการสลาก",
-            style: GoogleFonts.notoSansThai(
+
+          title: const Text(
+            "ขายออก",
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 22,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           bottom: TabBar(
-            indicatorColor: const Color(0xFFFFB300),
+            indicatorColor: Colors.white,
             indicatorWeight: 3,
-            labelColor: const Color(0xFFFFB300),
-            unselectedLabelColor: Colors.blueGrey.shade400,
-            labelStyle: GoogleFonts.notoSansThai(fontWeight: FontWeight.bold, fontSize: 14),
-            unselectedLabelStyle: GoogleFonts.notoSansThai(fontWeight: FontWeight.normal, fontSize: 14),
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
             onTap: (index) {
               controller.setSelectedType(index == 0 ? "sold" : "available");
             },
             tabs: const [
-              Tab(text: "รายการขายออกแล้ว"),
+              Tab(text: "รายการขายออก"),
               Tab(text: "รายการที่ยังไม่ขาย"),
             ],
           ),
         ),
         body: controller.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFB300)),
-                ),
-              )
+            ? const Center(child: CircularProgressIndicator())
             : TabBarView(
                 children: [
                   SoldListView(isSold: true, tickets: controller.soldLotto),
@@ -91,126 +83,114 @@ class SoldListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (tickets.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 48, color: Colors.blueGrey.shade600),
-            const SizedBox(height: 12),
-            Text(
-              "ไม่มีรายการสลาก",
-              style: GoogleFonts.notoSansThai(
-                fontSize: 16,
-                color: Colors.blueGrey.shade400,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+      return const Center(
+        child: Text(
+          "ไม่มีสลาก",
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: tickets.length,
-      itemBuilder: (context, index) {
-        final ticket = tickets[index];
-        final number = (ticket["lotto_number"] ?? "").toString();
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: ListView.builder(
+        itemCount: tickets.length,
+        itemBuilder: (context, index) {
+          final ticket = tickets[index];
+          final number = (ticket["lotto_number"] ?? "").toString();
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: isSold ? Colors.redAccent.withOpacity(0.1) : const Color(0xFF00E676).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              isSold ? "ขายออกแล้ว" : "พร้อมจำหน่าย",
-                              style: GoogleFonts.notoSansThai(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: isSold ? Colors.redAccent : const Color(0xFF00E676),
-                              ),
-                            ),
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "สลาก",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "ชุดที่ ${ticket['lotto_id'] ?? '-'}",
-                            style: GoogleFonts.notoSansThai(fontSize: 13, color: Colors.blueGrey.shade400),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: number
-                            .split('')
-                            .map(
-                              (digit) => Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 2),
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF0F172A),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.white.withOpacity(0.05)),
-                                ),
-                                child: Text(
-                                  digit,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: number
+                              .split('')
+                              .map(
+                                (digit) => Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 2,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                      255,
+                                      244,
+                                      232,
+                                      131,
+                                    ),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    digit,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: 12),
+                              )
+                              .toList(),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "ชุดที่ ${ticket['lotto_id'] ?? '-'}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "งวดวันที่ ${ticket['draw_date'] ?? '-'}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: [
                       Text(
-                        "งวดวันที่ ${ticket['draw_date'] ?? '-'}",
-                        style: GoogleFonts.notoSansThai(fontSize: 13, color: Colors.blueGrey.shade400),
+                        "${ticket['price'] ?? '-'}",
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 236, 172, 193),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                        ),
+                      ),
+                      const Text(
+                        "บาท",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "${ticket['price'] ?? '80'}",
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFFFFB300),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                      ),
-                    ),
-                    Text(
-                      "บาท",
-                      style: GoogleFonts.notoSansThai(fontSize: 13, color: Colors.blueGrey.shade400),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

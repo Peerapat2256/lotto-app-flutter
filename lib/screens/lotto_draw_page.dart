@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_backend/screens/lotto_result_page.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +13,6 @@ class LottoDrawPage extends StatefulWidget {
 class _LottoDrawPageState extends State<LottoDrawPage> {
   bool fromSold = false;
   bool allNumbers = false;
-  bool _isLoading = false;
   Map<String, String> prizes = {
     "prize1": "000000",
     "prize2": "000000",
@@ -23,8 +21,8 @@ class _LottoDrawPageState extends State<LottoDrawPage> {
     "prize5": "000000",
   };
 
+
   Future<void> drawPrizes() async {
-    setState(() => _isLoading = true);
     final url = Uri.parse("https://api-lotto-miqd.onrender.com/lotto/draw");
     try {
       final response = await http.post(
@@ -39,52 +37,31 @@ class _LottoDrawPageState extends State<LottoDrawPage> {
           setState(() {
             prizes = Map<String, String>.from(jsonResp["data"]);
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("สุ่มรางวัลสำเร็จ!", style: GoogleFonts.notoSansThai()),
-              backgroundColor: const Color(0xFF00E676),
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("เกิดข้อผิดพลาด"),
+              content: Text(jsonResp["message"] ?? "ไม่สามารถสุ่มรางวัลได้"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("ปิด"),
+                ),
+              ],
             ),
           );
-        } else {
-          _showErrorDialog(jsonResp["message"] ?? "ไม่สามารถสุ่มรางวัลได้");
         }
       } else {
-        _showErrorDialog("เซิร์ฟเวอร์ตอบสนองผิดพลาด (${response.statusCode})");
+        print("Error: ${response.body}");
       }
     } catch (e) {
-      _showErrorDialog("เกิดข้อผิดพลาดในการเชื่อมต่อ: $e");
-    } finally {
-      setState(() => _isLoading = false);
+      print("Exception: $e");
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: Text(
-          "เกิดข้อผิดพลาด",
-          style: GoogleFonts.notoSansThai(color: Colors.redAccent, fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          message,
-          style: GoogleFonts.notoSansThai(color: Colors.white),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              "ปิด",
-              style: GoogleFonts.notoSansThai(color: const Color(0xFFFFB300)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void submitLottoResult() {
+    // ส่งไปหน้า LottoResultPage
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LottoResultPage(prizes: prizes)),
@@ -94,226 +71,168 @@ class _LottoDrawPageState extends State<LottoDrawPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E293B),
-        elevation: 0,
-        title: Text(
+        backgroundColor: Colors.blue.shade600,
+        title: const Text(
           "สุ่มออกรางวัล",
-          style: GoogleFonts.notoSansThai(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Settings Panel
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
-                ),
-                padding: const EdgeInsets.all(20),
+      body: Column(
+        children: [
+          // ส่วนเลือกการสุ่ม
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              color: Colors.white,
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "เงื่อนไขการสุ่มรางวัล",
-                      style: GoogleFonts.notoSansThai(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    CheckboxListTile(
+                      title: const Text("สุ่มจากเลขที่ขายไปแล้ว"),
+                      value: fromSold,
+                      onChanged: (val) {
+                        setState(() {
+                          fromSold = val ?? false;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
                     ),
-                    const SizedBox(height: 12),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        unselectedWidgetColor: Colors.blueGrey.shade400,
-                      ),
-                      child: Column(
-                        children: [
-                          CheckboxListTile(
-                            title: Text(
-                              "สุ่มจากเลขที่ขายไปแล้ว",
-                              style: GoogleFonts.notoSansThai(color: Colors.white, fontSize: 14),
-                            ),
-                            activeColor: const Color(0xFFFFB300),
-                            checkColor: Colors.black,
-                            value: fromSold,
-                            onChanged: (val) {
-                              setState(() {
-                                fromSold = val ?? false;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          CheckboxListTile(
-                            title: Text(
-                              "สุ่มเลขทั้งหมด",
-                              style: GoogleFonts.notoSansThai(color: Colors.white, fontSize: 14),
-                            ),
-                            activeColor: const Color(0xFFFFB300),
-                            checkColor: Colors.black,
-                            value: allNumbers,
-                            onChanged: (val) {
-                              setState(() {
-                                allNumbers = val ?? false;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ],
-                      ),
+                    CheckboxListTile(
+                      title: const Text("สุ่มเลขทั้งหมด"),
+                      value: allNumbers,
+                      onChanged: (val) {
+                        setState(() {
+                          allNumbers = val ?? false;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     SizedBox(
-                      width: double.infinity,
-                      height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFB300),
-                          foregroundColor: Colors.black,
-                          disabledBackgroundColor: Colors.blueGrey.shade800,
-                          disabledForegroundColor: Colors.blueGrey.shade600,
+                          backgroundColor: Colors.yellow.shade600,
+                          foregroundColor: const Color(0xFF0C6FBB),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
                           ),
                         ),
-                        onPressed: (fromSold || allNumbers) && !_isLoading ? drawPrizes : null,
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                                  strokeWidth: 2.5,
-                                ),
-                              )
-                            : Text(
-                                "เริ่มออกรางวัลสุ่ม",
-                                style: GoogleFonts.notoSansThai(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
+                        onPressed: (fromSold || allNumbers) ? drawPrizes : null,
+                        child: const Text(
+                          "ออกรางวัล",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
 
-            // Prizes Display
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
-                  ),
-                  padding: const EdgeInsets.all(24),
+          // ส่วนแสดงรางวัล
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Card(
+                color: Colors.white,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         "รางวัลที่ 1",
-                        style: GoogleFonts.notoSansThai(
-                          color: const Color(0xFFFFB300),
+                        style: TextStyle(
+                          color: Color(0xFF0C6FBB),
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        "รางวัลละ: 6,000,000 ฿",
-                        style: GoogleFonts.notoSansThai(color: Colors.blueGrey.shade400, fontSize: 13),
+                      const Text(
+                        "รางวัลละ: 6,000,000",
+                        style: TextStyle(color: Colors.grey),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 2),
                       Text(
                         prizes["prize1"] ?? "000000",
-                        style: GoogleFonts.poppins(
-                          fontSize: 36,
+                        style: const TextStyle(
+                          fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 6,
+                          color: Color(0xFF0C6FBB),
+                          letterSpacing: 4,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Container(height: 1, color: Colors.white.withOpacity(0.05)),
-                      const SizedBox(height: 16),
+                      const Divider(height: 32),
 
                       GridView.count(
                         crossAxisCount: 2,
                         shrinkWrap: true,
-                        childAspectRatio: 1.1,
+                        childAspectRatio: 4 / 2,
                         physics: const NeverScrollableScrollPhysics(),
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
                         children: [
                           _PrizeBox(
                             "รางวัลที่ 2",
-                            "100,000 ฿",
+                            "100,000",
                             prizes["prize2"] ?? "000000",
                           ),
                           _PrizeBox(
                             "รางวัลที่ 3",
-                            "80,000 ฿",
+                            "80,000",
                             prizes["prize3"] ?? "000000",
                           ),
                           _PrizeBox(
                             "เลขท้าย 3 ตัว",
-                            "4,000 ฿",
+                            "4,000",
                             prizes["prize4"] ?? "000000",
                           ),
                           _PrizeBox(
                             "เลขท้าย 2 ตัว",
-                            "2,000 ฿",
+                            "2,000",
                             prizes["prize5"] ?? "000000",
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 12),
 
-                      // Submit Button
-                      Container(
+                      // ปุ่มยืนยันประกาศผลรางวัล
+                      SizedBox(
                         width: double.infinity,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF00E676),
-                              Color(0xFF00C853),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF00E676).withOpacity(0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
+                            backgroundColor: Colors.yellow.shade600,
+                            foregroundColor: const Color(0xFF0C6FBB),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
                             ),
                           ),
                           onPressed: submitLottoResult,
-                          child: Text(
+                          child: const Text(
                             "ยืนยันประกาศผลรางวัล",
-                            style: GoogleFonts.notoSansThai(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.white,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 18,
                             ),
                           ),
                         ),
@@ -323,8 +242,8 @@ class _LottoDrawPageState extends State<LottoDrawPage> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -339,41 +258,30 @@ class _PrizeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.03)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.notoSansThai(
-              color: Colors.blueGrey.shade300,
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-            ),
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFF0C6FBB),
+            fontSize: 14,
+            height: 2.2,
           ),
-          const SizedBox(height: 2),
-          Text(
-            "รางวัลละ: $prize",
-            style: GoogleFonts.notoSansThai(color: const Color(0xFFFFB300), fontSize: 11),
+        ),
+        Text(
+          "รางวัลละ: $prize",
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+        Text(
+          number,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 22,
+            color: Color(0xFF0C6FBB),
+            letterSpacing: 4,
           ),
-          const SizedBox(height: 8),
-          Text(
-            number,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-              color: Colors.white,
-              letterSpacing: 2,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
