@@ -24,7 +24,17 @@ Dedicated user and admin hub layouts.
 
 ---
 
-### 3. Admin Lottery Management & Draw Flow
+### 3. User Lottery Purchase & Checking Flow
+Seamless workflow for users to search, purchase, and verify their lottery tickets.
+
+| Buy Lottery Screen | Shopping Cart | My Lottery | Check Prize Screen |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/images/buy lottery.png" width="200"/> | <img src="assets/images/cart.png" width="200"/> | <img src="assets/images/user page mylottery.png" width="200"/> | <img src="assets/images/Check the prize.png" width="200"/> |
+| Browse and select available lottery tickets | View pending tickets and check out using wallet | View purchased lottery tickets history | Verify ticket numbers and claim prizes |
+
+---
+
+### 4. Admin Lottery Management & Draw Flow
 Powerful utilities for administrative management of lottery ticket generation and drawing.
 
 | Admin Add Lottery | Admin Random Lottery | Admin Confirming Draw |
@@ -33,6 +43,7 @@ Powerful utilities for administrative management of lottery ticket generation an
 | Select ticket quantity to generate and insert into the stock | Perform random prize draws for regular and matching numbers | Declare officially drawn winning tickets and confirm results |
 
 ---
+
 
 ## Features
 
