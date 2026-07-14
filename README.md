@@ -4,7 +4,7 @@ A cross-platform mobile application built with Flutter for browsing, purchasing,
 
 ## Demo 
 <p align="center">
-  <img src="assets/images/resisger.png" width="220"/>
+  <img src="assets/images/register.png" width="220"/>
   <img src="assets/images/login.png" width="220"/>
 </p>
 
