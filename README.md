@@ -1,20 +1,51 @@
-# Lottery Mobile Application
+# Drawly - Online Lottery Application
 
-A cross-platform mobile application built with Flutter for browsing, purchasing, and checking lottery tickets.
+A cross-platform mobile lottery application built with Flutter. It provides interfaces for both users (browsing, purchasing in cart, checking & claiming prizes) and administrators (generating tickets, drawing prizes, resetting system), using Firebase Firestore for backend services.
 
-## Demo 
-<p align="center">
-  <img src="assets/images/register.png" width="220"/>
-  <img src="assets/images/login.png" width="220"/>
-</p>
+## User Interface Demo
+
+### 1. Authentication & Registration Flow
+A secure login and registration onboarding flow.
+
+| Login Screen | Registration Screen |
+| :---: | :---: |
+| <img src="assets/images/login.png" width="300"/> | <img src="assets/images/register.png" width="300"/> |
+| Account Login with Email/Username | Account registration with name, email, and password |
+
+---
+
+### 2. Main Dashboards
+Dedicated user and admin hub layouts.
+
+| User Home Dashboard | Admin Home Dashboard |
+| :---: | :---: |
+| <img src="assets/images/user menu.png" width="250"/> | <img src="assets/images/admin menu.png" width="250"/> |
+| Browse lottery tickets, search numbers, view cart, and check winning history | Access configuration options: generate tickets, random numbers, and draw prizes |
+
+---
+
+### 3. Admin Lottery Management & Draw Flow
+Powerful utilities for administrative management of lottery ticket generation and drawing.
+
+| Admin Add Lottery | Admin Random Lottery | Admin Confirming Draw |
+| :---: | :---: | :---: |
+| <img src="assets/images/admin add lottery.png" width="200"/> | <img src="assets/images/admin random lottery.png" width="200"/> | <img src="assets/images/admin confirming the prize draw.png" width="200"/> |
+| Select ticket quantity to generate and insert into the stock | Perform random prize draws for regular and matching numbers | Declare officially drawn winning tickets and confirm results |
+
+---
 
 ## Features
 
-* **User Authentication**: Login and registration screens.
-* **Lottery Dashboard**: View available lottery numbers, draw page, and search numbers.
-* **Shopping Cart**: Manage and purchase selected lottery tickets.
-* **Prize Checker**: Check draw results and verify winning tickets.
-* **Admin Panel**: Manage sold lottery tickets and system settings.
+* **User Features**:
+  * Registration and login interface.
+  * Search, browse, and purchase lottery tickets.
+  * Shopping cart to select multiple tickets before checkout.
+  * Real-time claim prize system directly reflecting on wallet balance.
+* **Admin Features**:
+  * Generate batches of random lottery tickets.
+  * Draw winning numbers (First, Second, Third prizes, 3-digit, and 2-digit).
+  * System reset capability (wipes records while retaining credentials).
+* **Backend Integration**: Connected to Node.js/Express API powered by Firebase Firestore.
 
 ## How to Run
 
@@ -22,7 +53,7 @@ A cross-platform mobile application built with Flutter for browsing, purchasing,
 * Flutter SDK installed.
 * Connected simulator/emulator or physical mobile device.
 
-### Installation and Execution
+### Compilation and Execution
 
 1. Fetch project dependencies:
    ```bash
@@ -33,3 +64,4 @@ A cross-platform mobile application built with Flutter for browsing, purchasing,
    ```bash
    flutter run
    ```
+
